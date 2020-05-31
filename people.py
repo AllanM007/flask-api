@@ -90,42 +90,89 @@ def create(person):
     else:
         abort(409, f'Person {fname} {lname} exists already')
 
-def update(lname, person):
+
+def update(person_id, person):
     """
     This function updates an existing person in the people structure
-    :param lname:   last name of person to update in the people structure
-    :param person:  person to update
-    :return:        updated person structure
+    Throws an error if a person with the name we want to update to
+    already exists in the database.
+    :param person_id:   Id of the person to update in the people structure
+    :param person:      person to update
+    :return:            updated person structure
     """
-    # Does the person exist in people?
-    if lname in PEOPLE:
-        PEOPLE[lname]["fname"] = person.get("fname")
-        PEOPLE[lname]["timestamp"] = get_timestamp()
+    # Get the person requested from the db into session
+    update_person = Person.query.filter(
+        Person.person_id == person_id
+    ).one_or_none()
 
-        return PEOPLE[lname]
+    # Try to find an existing person with the same name as the update
+    fname = person.get("fname")
+    lname = person.get("lname")
 
-    # otherwise, nope, that's an error
-    else:
+    existing_person = (
+        Person.query.filter(Person.fname == fname)
+        .filter(Person.lname == lname)
+        .one_or_none()
+    )
+
+    # Are we trying to find a person that does not exist?
+    if update_person is None:
         abort(
-            404, "Person with last name {lname} not found".format(lname=lname)
+            404,
+            "Person not found for Id: {person_id}".format(person_id=person_id),
         )
 
+    # Would our update create a duplicate of another person already existing?
+    elif (
+        existing_person is not None and existing_person.person_id != person_id
+    ):
+        abort(
+            409,
+            "Person {fname} {lname} exists already".format(
+                fname=fname, lname=lname
+            ),
+        )
 
-def delete(lname):
+    # Otherwise go ahead and update!
+    else:
+
+        # turn the passed in person into a db object
+        schema = PersonSchema()
+        update = schema.load(person, session=db.session)
+
+        # Set the id to the person we want to update
+        update.person_id = update_person.person_id
+
+        # merge the new object into the old and commit it to the db
+        db.session.merge(update)
+        db.session.commit()
+
+        # return updated person in the response
+        data = schema.dump(update_person)
+
+        return data, 200
+
+
+def delete(person_id):
     """
     This function deletes a person from the people structure
-    :param lname:   last name of person to delete
-    :return:        200 on successful delete, 404 if not found
+    :param person_id:   Id of the person to delete
+    :return:            200 on successful delete, 404 if not found
     """
-    # Does the person to delete exist?
-    if lname in PEOPLE:
-        del PEOPLE[lname]
+    # Get the person requested
+    person = Person.query.filter(Person.person_id == person_id).one_or_none()
+
+    # Did we find a person?
+    if person is not None:
+        db.session.delete(person)
+        db.session.commit()
         return make_response(
-            "{lname} successfully deleted".format(lname=lname), 200
+            "Person {person_id} deleted".format(person_id=person_id), 200
         )
 
-    # Otherwise, nope, person to delete not found
+    # Otherwise, nope, didn't find that person
     else:
         abort(
-            404, "Person with last name {lname} not found".format(lname=lname)
+            404,
+            "Person not found for Id: {person_id}".format(person_id=person_id),
         )
