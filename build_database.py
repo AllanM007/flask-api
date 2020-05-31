@@ -18,7 +18,7 @@ db.create_all()
 
 # Iterate over the PEOPLE structure and populate the database
 for person in PEOPLE:
-    p = Person(lname=person.get("lname"), fname=person.get("fname"))
+    p = Person(lname=person['lname'], fname=person['fname'])
     db.session.add(p)
 
 db.session.commit()
