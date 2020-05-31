@@ -45,7 +45,7 @@ def read_one(person_id):
 
         # Serialize the data for the response
         person_schema = PersonSchema()
-        return person_schema.dump(person).data
+        return person_schema.dump(person)
 
     # Otherwise, nope, didn't find that person
     else:
@@ -65,24 +65,26 @@ def create(person):
     fname = person.get('fname')
     lname = person.get('lname')
 
-    existing_person = Person.query \
-        .filter(Person.fname == fname) \
-        .filter(Person.lname == lname) \
+    existing_person = (
+        Person.query
+        .filter(Person.fname == fname)
+        .filter(Person.lname == lname)
         .one_or_none()
+    )
 
     # Can we insert this person?
     if existing_person is None:
 
         # Create a person instance using the schema and the passed-in person
         schema = PersonSchema()
-        new_person = schema.load(person, session=db.session).data
+        new_person = schema.load(person)
 
         # Add the person to the database
         db.session.add(new_person)
         db.session.commit()
 
         # Serialize and return the newly created person in the response
-        return schema.dump(new_person).data, 201
+        return schema.dump(new_person), 201
 
     # Otherwise, nope, person exists already
     else:
