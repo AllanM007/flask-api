@@ -18,9 +18,7 @@ def read_all():
     :return:        json string of list of people
     """
     # Create the list of people from our data
-    people = Person.query \
-        .order_by(Person.lname) \
-        .all()
+    people = Person.query.order_by(Person.lname).all()
 
     # Serialize the data for the response
     person_schema = PersonSchema(many=True)
@@ -36,16 +34,16 @@ def read_one(person_id):
     :return:            person matching ID
     """
     # Get the person requested
-    person = Person.query \
-        .filter(Person.person_id == person_id) \
-        .one_or_none()
+    person = Person.query.filter(Person.person_id == person_id).one_or_none()
 
     # Did we find a person?
     if person is not None:
 
         # Serialize the data for the response
         person_schema = PersonSchema()
-        return person_schema.dump(person)
+        data = person_schema.dump(person)
+
+        return data
 
     # Otherwise, nope, didn't find that person
     else:
@@ -109,8 +107,8 @@ def update(person_id, person):
     fname = person.get("fname")
     lname = person.get("lname")
 
-    existing_person = (
-        Person.query.filter(Person.fname == fname)
+    existing_person = ( Person.query
+        .filter(Person.fname == fname)
         .filter(Person.lname == lname)
         .one_or_none()
     )
@@ -138,7 +136,7 @@ def update(person_id, person):
 
         # turn the passed in person into a db object
         schema = PersonSchema()
-        update = schema.load(person, session=db.session)
+        update = schema.load(person)
 
         # Set the id to the person we want to update
         update.person_id = update_person.person_id

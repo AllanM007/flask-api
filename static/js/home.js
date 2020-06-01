@@ -20,6 +20,12 @@ ns.model = (function() {
                 url: 'api/people',
                 accepts: 'application/json',
                 dataType: 'json'
+                success: function(result){
+                    console.log(result);
+                }
+                error: function(error) {
+                    console.log(error);
+                }
             };
             $.ajax(ajax_options)
             .done(function(data) {
@@ -37,6 +43,12 @@ ns.model = (function() {
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify(person)
+                success: function(result){
+                    console.log(result);
+                }
+                error: function(error) {
+                    console.log(error);
+                }
             };
             $.ajax(ajax_options)
             .done(function(data) {
@@ -54,6 +66,12 @@ ns.model = (function() {
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify(person)
+                success: function(result){
+                    console.log(result);
+                }
+                error: function(error) {
+                    console.log(error);
+                }
             };
             $.ajax(ajax_options)
             .done(function(data) {
@@ -68,7 +86,15 @@ ns.model = (function() {
                 type: 'DELETE',
                 url: `api/people/${person_id}`,
                 accepts: 'application/json',
-                contentType: 'plain/text'
+                contentType: 'plain/text',
+                dataType: 'json',
+                data: JSON.stringify(person.person_id)
+                success: function(result){
+                    console.log(result);
+                }
+                error: function(error) {
+                    console.log(error);
+                }
             };
             $.ajax(ajax_options)
             .done(function(data) {
