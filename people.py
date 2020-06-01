@@ -7,8 +7,6 @@ from config import db
 from datetime import datetime
 from models import Person, PersonSchema
 
-def get_timestamp():
-    return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
 
 def read_all():
     """
@@ -136,7 +134,7 @@ def update(person_id, person):
 
         # turn the passed in person into a db object
         schema = PersonSchema()
-        update = schema.load(person)
+        update = schema.load(person, session=db.session)
 
         # Set the id to the person we want to update
         update.person_id = update_person.person_id
