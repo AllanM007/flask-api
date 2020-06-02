@@ -27,9 +27,6 @@ class Note(db.Model):
 
 class PersonSchema(ma.SQLAlchemyAutoSchema):
 
-	#def __init__(self, **kwargs):
-		#super().__init__(strict=True, **kwargs)
-
 	class Meta:
 		model = Person
 		load_instance = True
@@ -42,10 +39,6 @@ class PersonNoteSchema(ma.SQLAlchemyAutoSchema):
     """
     This class exists to get around a recursion issue
     """
-
-    #def __init__(self, **kwargs):
-        #super().__init__(strict=True, **kwargs)
-
     note_id = fields.Int()
     person_id = fields.Int()
     content = fields.Str()
@@ -53,9 +46,6 @@ class PersonNoteSchema(ma.SQLAlchemyAutoSchema):
 
 
 class NoteSchema(ma.SQLAlchemyAutoSchema):
-    
-    #def __init__(self, **kwargs):
-        #super().__init__(strict=True, **kwargs)
 
     class Meta:
         model = Note
@@ -69,10 +59,6 @@ class NotePersonSchema(ma.SQLAlchemyAutoSchema):
     """
     This class exists to get around a recursion issue
     """
-
-    #def __init__(self, **kwargs):
-        #super().__init__(strict=True, **kwargs)
-
     person_id = fields.Int()
     lname = fields.Str()
     fname = fields.Str()
