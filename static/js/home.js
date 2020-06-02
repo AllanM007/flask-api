@@ -54,6 +54,12 @@ ns.model = (function() {
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify(person)
+                success: function(response){
+                    console.log(response);
+                },
+                error: function(error){
+                    console.log(error);
+                }
             };
             $.ajax(ajax_options)
             .done(function(data) {
@@ -69,6 +75,12 @@ ns.model = (function() {
                 url: `api/people/${person_id}`,
                 accepts: 'application/json',
                 contentType: 'plain/text'
+                success: function(response){
+                    console.log(response);
+                },
+                error: function(error){
+                    console.log(error);
+                }
             };
             $.ajax(ajax_options)
             .done(function(data) {
