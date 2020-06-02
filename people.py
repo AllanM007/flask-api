@@ -5,7 +5,7 @@ PEOPLE collection
 from flask import make_response, abort
 from config import db
 from datetime import datetime
-from models import Person, PersonSchema
+from models import Person, PersonSchema, Note
 
 
 def read_all():
@@ -32,7 +32,7 @@ def read_one(person_id):
     :return:            person matching ID
     """
     # Get the person requested
-    person = Person.query.filter(Person.person_id == person_id).one_or_none()
+    person = Person.query.filter(Person.person_id == person_id).outerjoin(Note).one_or_none()
 
     # Did we find a person?
     if person is not None:
@@ -45,9 +45,10 @@ def read_one(person_id):
 
     # Otherwise, nope, didn't find that person
     else:
-        abort(404, 'Person not found for Id: {person_id}'.format(person_id=person_id))
+        #abort(404, 'Person not found for Id: {person_id}'.format(person_id=person_id))
+        abort(404, f"Person not found for Id: {person_id}")
 
-    return person
+    #return person
 
 
 def create(person):
